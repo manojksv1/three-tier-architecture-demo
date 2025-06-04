@@ -3,13 +3,17 @@
 #
 FROM debian:10 AS build
 
-RUN apt-get update && apt-get -y install maven
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends apt-transport-https ca-certificates wget gnupg && \
+    apt-get install -y openjdk-11-jdk && \
+    apt-get install -y maven
 
 WORKDIR /opt/shipping
 
-COPY pom.xml /opt/shipping/
+COPY pom.xml .
 RUN mvn dependency:resolve
-COPY src /opt/shipping/src/
+
+COPY src ./src
 RUN mvn package
 
 #
